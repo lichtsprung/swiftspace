@@ -1,0 +1,14 @@
+version := "0.1"
+
+scalaVersion := "2.9.2"
+
+name := "SwiftSpace Core"
+
+organization := "net.swiftspace.core"
+
+fork in run := true
+
+libraryDependencies += "org.scalatest" %% "scalatest" % "1.8" % "test"
+
+libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.3"
+
