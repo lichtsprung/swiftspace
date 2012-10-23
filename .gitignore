@@ -20,7 +20,7 @@ dist
 /*.iws
 /.idea
 /.idea_modules
-/project
+
 
 # we use sbt!
 /build.xml
