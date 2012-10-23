@@ -1,14 +1,22 @@
 package net.swiftspace.core
 
-import akka.actor.{Props, ActorSystem, Actor}
+import akka.actor.{ActorRef, Props, ActorSystem, Actor}
+import collection.mutable
+
+case class RegisterPerson(person: Person)
 
 /**
  * The Simulation Actor.
  */
 class Simulation extends Actor {
+  val persons = mutable.Buffer[ActorRef]()
 
   def receive = {
-    case Tick() => println("tick")
+    case Tick() =>
+      persons.foreach(p => p ! Tick())
+    case RegisterPerson(person) =>
+      persons += person.self
+
   }
 }
 
