@@ -2,7 +2,7 @@ import sbt._
 import Keys._
 
 object SwiftspaceBuild extends Build {
-    lazy val root = Project(id = "swiftspace",
+    lazy val root = Project(id = "root",
                             base = file(".")) aggregate(core, ui)
                          
     lazy val core = Project(id = "swiftspace-core",
