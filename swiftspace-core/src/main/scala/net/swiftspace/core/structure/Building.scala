@@ -3,6 +3,16 @@ package net.swiftspace.core.structure
 import akka.actor.{Props, Actor}
 import collection.mutable
 import akka.event.Logging
+import net.swiftspace.core.resource.Resource
+import net.swiftspace.core._
+import net.swiftspace.core.Coordinate
+import net.swiftspace.core.Tick
+import resource.Resource
+import structure.ModuleInput
+import structure.ModuleOutput
+import structure.ModuleRequirements
+import structure.ModuleStats
+import net.swiftspace.core.InstallModule
 
 
 /**
@@ -13,12 +23,11 @@ import akka.event.Logging
  * @param output the product that is being produced by this module unit
  * @param structure the parent structure it belongs to
  */
-class StructureModule(
-                       val requirements: ModuleRequirements,
-                       val stats: ModuleStats,
-                       val input: ModuleInput,
-                       val output: ModuleOutput,
-                       val structure: Structure) {
+class Module(val requirements: ModuleRequirements,
+             val stats: ModuleStats,
+             val input: ModuleInput,
+             val output: ModuleOutput,
+             val structure: Structure) {
   def update() = {
 
   }
@@ -75,7 +84,7 @@ class Structure(val name: String, val coordinate: Coordinate, val moduleSlotCoun
    */
   var pressure = 1.0
 
-  val modules = mutable.Buffer[StructureModule]()
+  val modules = mutable.Buffer[Module]()
   val availableResources = mutable.HashMap[Resource, Double]()
   val neighbours = mutable.HashMap[Direction.type, Structure]()
 

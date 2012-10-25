@@ -1,7 +1,7 @@
 package net.swiftspace.core
 
 import java.util.Date
-import structure.{Structure, StructureModule}
+import structure.{Structure, Module}
 
 
 sealed case class SimulationMessage()
