@@ -12,11 +12,18 @@ import akka.event.Logging
  * @param input the resource that is being processed by this module unit
  * @param output the product that is being produced by this module unit
  */
-class StructureModule(val requirements: ModuleRequirements, val input: ModuleInput, val output: ModuleOutput) {
+class StructureModule(
+                       val requirements: ModuleRequirements,
+                       val stats: ModuleStats,
+                       val input: ModuleInput,
+                       val output: ModuleOutput,
+                       val structure: Structure) {
   def update() = {
 
   }
 }
+
+case class ModuleStats(val processingRate: Double)
 
 /**
  * The requirements a Structure has to meet to be able to install the module
@@ -28,13 +35,13 @@ case class ModuleRequirements(energy: Double)
  * What is processed by the module?
  * @param resource the name of the resource
  */
-case class ModuleInput(resource: String)
+case class ModuleInput(val resource: String, val maxCapacity: Double, var currentCapacity: Double)
 
 /**
  * What is produced by the module?
  * @param resource the name of the resource
  */
-case class ModuleOutput(resource: String)
+case class ModuleOutput(val resource: String, val maxCapacity: Double, var currentCapacity: Double)
 
 /**
  * Installs a new module to the structure.
