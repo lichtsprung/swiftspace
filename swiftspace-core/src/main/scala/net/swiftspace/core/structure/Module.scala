@@ -30,7 +30,7 @@ class ProcessingModule(
 
   import net.swiftspace.core.Simulation.Tick
 
-  val resources = mutable.HashMap[Resource, Double]()
+  val resources = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
   input.foreach(r => resources += r._1 -> 0.0)
 
   var result = 0.0
@@ -38,14 +38,15 @@ class ProcessingModule(
   var storage = 0.0
 
   def processResources(): Unit = {
+    log.info("processing " + input + " to " + output)
     if (input.foldLeft(true)((a, b) => a && resources.get(b._1).get >= b._2)) {
       storage += processingRate
-      log.info("new amount: " + storage)
+      log.info(output + " available: " + storage)
       input.foreach(r => resources.update(r._1, resources.get(r._1).get - r._2))
     } else {
       input.foreach(r => {
         if (resources.get(r._1).get < r._2) {
-          log.info("Demanding resource: " + r._1.name)
+          log.info("Demanding resource from main structure: " + r._1.name)
           context.parent ! DemandResource(r._1, r._2 * 10)
         }
       })
@@ -64,7 +65,27 @@ class ProcessingModule(
         storage = 0.0
       }
     case ReceiveResource(resource, amount) =>
-      resources.update(resource, resources.get(resource).get + amount)
-      log.info("Amount of " + resource + " available: " + resources.get(resource))
+      if (resources.contains(resource)) {
+        resources.update(resource, resources.get(resource).get + amount)
+      } else {
+        log.error("Module cannot process " + resource)
+      }
+
+      log.debug("Amount of " + resource + " available: " + resources.get(resource))
   }
+}
+
+object Module {
+
+  case class ModuleDescriptor( input: Seq[(Resource, Double)],
+                          output: Resource,
+                          processingRate: Double,
+                          processingTime: Double,
+                          capacity: Double)
+
+  class WaterProcessor(level: Int = 1) extends ModuleDescriptor(
+    Seq[(Resource, Double)]((Resource("Oxygen"), 1), (Resource("Hydrogen"), 2)),
+    Resource("Water"),
+    1, 50.0 / level, 3 * level)
+
 }

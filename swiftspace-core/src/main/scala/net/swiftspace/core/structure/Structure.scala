@@ -4,6 +4,7 @@ import akka.actor.{Props, ActorLogging, Actor}
 import collection.mutable
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.Simulation.Coordinate
+import net.swiftspace.core.structure.Module.ModuleDescriptor
 
 
 object Structure {
@@ -12,11 +13,7 @@ object Structure {
 
   case class DemandResource(resource: Resource, amount: Double)
 
-  case class NewProcessingModule(input: Seq[(Resource, Double)],
-                                 output: Resource,
-                                 processingRate: Double,
-                                 processingTime: Double,
-                                 capacity: Double)
+  case class NewProcessingModule(m: ModuleDescriptor)
 
   case class NewStructure(coordinates: Coordinate)
 
@@ -30,26 +27,31 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
   import net.swiftspace.core.Simulation._
   import net.swiftspace.core.structure.Structure._
 
-  val resources = mutable.HashMap[Resource, Double]()
+  val resources = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
 
 
   def receive = {
     case Tick =>
       context.children.foreach(c => c ! Tick)
     case ReceiveResource(resource, amount) =>
-      resources.update(resource, resources.get(resource).get + amount)
-      log.info("Amount of " + resource + " available: " + resources.get(resource))
-    case DemandResource(resource, amount) =>
-      if (resources.get(resource).get >= amount) {
-        sender ! ReceiveResource(resource, amount)
-        resources.update(resource, resources.get(resource).get - amount)
+      if (resources.contains(resource)) {
+        resources.update(resource, resources.get(resource).get + amount)
+      } else {
+        resources += resource -> amount
       }
-      log.info("Amount of " + resource + " available: " + resources.get(resource))
-    case NewProcessingModule(input, output, processingRate, processingTime, capacity) =>
+    case DemandResource(resource, amount) =>
+      if (resources.contains(resource)) {
+        if (resources.get(resource).get >= amount) {
+          sender ! ReceiveResource(resource, amount)
+          resources.update(resource, resources.get(resource).get - amount)
+        }
+      } else {
+        resources += resource -> 0
+      }
+      log.debug("Amount of " + resource + " available: " + resources.get(resource))
+    case NewProcessingModule(m) =>
       log.info("Adding new processing unit")
-      input.foreach(resource => resources += resource._1 -> 200)
-      resources += output -> 0
-      context.actorOf(Props(new ProcessingModule(input, output, processingRate, processingTime, capacity)))
+      context.actorOf(Props(new ProcessingModule(m.input, m.output, m.processingRate, m.processingTime, m.capacity)))
 
   }
 }

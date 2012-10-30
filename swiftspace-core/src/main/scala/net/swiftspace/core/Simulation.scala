@@ -32,7 +32,6 @@ class Simulation extends Actor with ActorLogging {
     case TickRate(rate) =>
       ticker.cancel()
       ticker = context.system.scheduler.schedule(rate, rate, self, Tick)
-
   }
 
   override def postStop() = {
