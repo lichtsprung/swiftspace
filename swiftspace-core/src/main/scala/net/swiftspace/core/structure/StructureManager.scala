@@ -2,7 +2,6 @@ package net.swiftspace.core.structure
 
 import akka.actor.{ActorLogging, Props, Actor}
 import net.swiftspace.core.structure.Structure.{NewProcessingModule, NewStructure}
-import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Module.{PowerGenerator, Electrolyser, WaterGenerator}
 
 

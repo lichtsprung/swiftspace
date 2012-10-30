@@ -1,6 +1,6 @@
 package net.swiftspace.core.structure
 
-import akka.actor.{ActorLogging, Actor, ActorRef}
+import akka.actor.{ActorLogging, Actor}
 
 import collection.mutable
 import net.swiftspace.core.processing.Resource
@@ -83,12 +83,25 @@ class ProcessingModule(
 
 object Module {
 
+  /**
+   * This class is used as a descriptor for a processing unit in the simulation. It can be sent between actors and used
+   * as a reference to create a new processing module.
+   *
+   * @param input the input resources
+   * @param output the resources that are being produced
+   * @param processingTime the time it takes to create 1 unit of the output
+   * @param capacity the maximum storage capacity before it is delivered to the main structure
+   */
   case class ProcessingModuleDescriptor(
                                          input: Seq[(Resource, Double)],
                                          output: Seq[(Resource, Double)],
                                          processingTime: Double,
                                          capacity: Double)
 
+  /**
+   * A processing unit that produces fresh water by using oxygen and hydrogen
+   * @param level the level of this processing unit
+   */
   class WaterGenerator(level: Int = 1) extends ProcessingModuleDescriptor(
     Seq[(Resource, Double)]((
       Resource("Oxygen"), 1),
