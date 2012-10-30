@@ -1,14 +1,15 @@
 package net.swiftspace.core
 
 import akka.actor.{Props, ActorSystem}
+import structure.Structure.NewStructure
+import structure.StructureManager
+import net.swiftspace.core.Simulation.Coordinate
 
-/**
- * Starting the Simulation...yay!
- */
-class Main extends App {
-  val actorSystem = ActorSystem("simulationSystem")
-  val simulation = actorSystem.actorOf(Props[Simulation], "simulation")
-  val clock = actorSystem.actorOf(Props[SimulationClock], "clock")
+object Main extends App {
+  val system = ActorSystem("swiftspace-core")
+  val simulation = system.actorOf(Props[Simulation], "simulation")
+  val structure = system.actorOf(Props[StructureManager], "structuremanager")
 
-  clock ! StartClock(1000)
+  structure ! NewStructure(Coordinate(0, 0, 0))
+
 }
