@@ -1,6 +1,6 @@
 version := "0.1"
 
-scalaVersion := "2.9.1"
+scalaVersion := "2.9.2"
 
 name := "SwiftSpace Core"
 
@@ -13,4 +13,5 @@ resolvers += "Typesafe Repository" at "http://repo.typesafe.com/typesafe/release
 libraryDependencies += "org.scalatest" %% "scalatest" % "1.8" % "test"
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.3"
+
 

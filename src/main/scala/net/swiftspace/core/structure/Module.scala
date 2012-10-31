@@ -128,5 +128,11 @@ object Module {
       (Resource("Helium"), 0.1)),
     1.0 / level, 20 * level)
 
+  case class ModuleDescriptor() {
+    val input = mutable.HashMap[Resource, Double]()
+    val output = mutable.HashMap[Resource, Double]()
+    var processingTime = 0.0
+    var capacity = 0.0
+  }
 
 }
