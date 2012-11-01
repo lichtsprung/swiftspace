@@ -14,4 +14,5 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "1.8" % "test"
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.3"
 
+libraryDependencies += "com.twitter"   % "util-eval"   % "5.3.13"
 

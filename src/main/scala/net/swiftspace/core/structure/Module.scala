@@ -14,14 +14,15 @@ abstract class Module extends Actor with ActorLogging
 
 /**
  * Can process resources.
+ * @param name the name of this unit
  * @param input the input resources and how much is needed to produce one unit of the resulting resource
  * @param output the resource that is being produced
  * @param processingTime how long it takes to produce one unit
  * @param capacity how much the processing unit can store
  */
-class ProcessingModule(
-                        input: Seq[(Resource, Double)],
-                        output: Seq[(Resource, Double)],
+class ProcessingModule( name: String,
+                        input: List[(Resource, Double)],
+                        output: List[(Resource, Double)],
                         processingTime: Double,
                         capacity: Double)
   extends Module {
@@ -93,46 +94,9 @@ object Module {
    * @param capacity the maximum storage capacity before it is delivered to the main structure
    */
   case class ProcessingModuleDescriptor(
-                                         input: Seq[(Resource, Double)],
-                                         output: Seq[(Resource, Double)],
+                                         name: String,
+                                         input: List[(Resource, Double)],
+                                         output: List[(Resource, Double)],
                                          processingTime: Double,
                                          capacity: Double)
-
-  /**
-   * A processing unit that produces fresh water by using oxygen and hydrogen
-   * @param level the level of this processing unit
-   */
-  class WaterGenerator(level: Int = 1) extends ProcessingModuleDescriptor(
-    Seq[(Resource, Double)]((
-      Resource("Oxygen"), 1),
-      (Resource("Hydrogen"), 2),
-      (Resource("Energy"), 0.5)),
-    Seq[(Resource, Double)](
-      (Resource("Water"), 1)),
-    1.0 / level, 50 * level)
-
-  class Electrolyser(level: Int = 1) extends ProcessingModuleDescriptor(
-    Seq[(Resource, Double)]((
-      Resource("Water"), 1),
-      (Resource("Energy"), 2)),
-    Seq[(Resource, Double)](
-      (Resource("Oxygen"), 1),
-      (Resource("Hydrogen"), 2)),
-    2.0 / level, 50 * level)
-
-  class PowerGenerator(level: Int = 1) extends ProcessingModuleDescriptor(
-    Seq[(Resource, Double)]((
-      Resource("Hydrogen"), 1)),
-    Seq[(Resource, Double)](
-      (Resource("Energy"), 3),
-      (Resource("Helium"), 0.1)),
-    1.0 / level, 20 * level)
-
-  case class ModuleDescriptor() {
-    val input = mutable.HashMap[Resource, Double]()
-    val output = mutable.HashMap[Resource, Double]()
-    var processingTime = 0.0
-    var capacity = 0.0
-  }
-
 }

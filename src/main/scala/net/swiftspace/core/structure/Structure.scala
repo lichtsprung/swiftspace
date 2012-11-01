@@ -55,7 +55,7 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
       }
     case NewProcessingModule(m) =>
       log.info("Adding new processing unit")
-      context.actorOf(Props(new ProcessingModule(m.input, m.output, m.processingTime, m.capacity)))
+      context.actorOf(Props(new ProcessingModule(m.name, m.input, m.output, m.processingTime, m.capacity)))
 
   }
 }
