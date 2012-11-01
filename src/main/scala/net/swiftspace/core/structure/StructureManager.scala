@@ -1,6 +1,6 @@
 package net.swiftspace.core.structure
 
-import akka.actor.{ActorLogging, Props, Actor}
+import akka.actor.{ActorRef, ActorLogging, Props, Actor}
 import net.swiftspace.core.structure.Structure.{NewProcessingModule, NewStructure}
 import xml.XML
 import java.io.File
@@ -18,16 +18,16 @@ object StructureManager {
 class StructureManager extends Actor with ActorLogging {
 
   import net.swiftspace.core.Simulation.Tick
-
-  val test = new Eval()
-
+  var test: ActorRef = null
 
   def receive = {
     case Tick =>
       context.children.foreach(c => c ! Tick)
     case NewStructure(coordinate) =>
       log.info("Spawning new Structure: " + coordinate)
-      val ns = context.actorOf(Props(new Structure(coordinate)))
+      test = context.actorOf(Props(new Structure(coordinate)))
+    case NewProcessingModule(m) =>
+      test ! NewProcessingModule(m)
   }
 
 }

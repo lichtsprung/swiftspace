@@ -2,11 +2,16 @@ package net.swiftspace.core
 
 import akka.util.duration._
 import akka.actor.{Props, ActorLogging, Actor}
+import config.Config
 import structure.StructureManager
 import akka.util.Duration
+import com.twitter.util.Eval
+import java.io.File
 
 
 object Simulation {
+  val url = getClass.getClassLoader.getResource("Configuration.scala").getFile
+  val configuration = Eval[Config](new File(url))
 
   case object Tick
 

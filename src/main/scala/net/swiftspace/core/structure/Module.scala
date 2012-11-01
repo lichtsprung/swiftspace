@@ -20,11 +20,11 @@ abstract class Module extends Actor with ActorLogging
  * @param processingTime how long it takes to produce one unit
  * @param capacity how much the processing unit can store
  */
-class ProcessingModule( name: String,
-                        input: List[(Resource, Double)],
-                        output: List[(Resource, Double)],
-                        processingTime: Double,
-                        capacity: Double)
+class ProcessingModule(name: String,
+                       input: List[(Resource, Double)],
+                       output: List[(Resource, Double)],
+                       processingTime: Double,
+                       capacity: Double)
   extends Module {
 
   import net.swiftspace.core.Simulation.Tick
@@ -93,10 +93,10 @@ object Module {
    * @param processingTime the time it takes to create 1 unit of the output
    * @param capacity the maximum storage capacity before it is delivered to the main structure
    */
-  case class ProcessingModuleDescriptor(
-                                         name: String,
-                                         input: List[(Resource, Double)],
-                                         output: List[(Resource, Double)],
-                                         processingTime: Double,
-                                         capacity: Double)
+  case class ProcessingModuleDescriptor(name: String,
+                                        input: List[(String, Double)],
+                                        output: List[(String, Double)],
+                                        processingTime: Double,
+                                        capacity: Double)
+
 }
