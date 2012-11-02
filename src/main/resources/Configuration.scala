@@ -1,12 +1,15 @@
+import collection.immutable.HashMap
 import net.swiftspace.core.config.Config
 import net.swiftspace.core.processing.Resource
+import net.swiftspace.core.Simulation.Coordinate
 import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
+import net.swiftspace.core.structure.StructureDescriptor
 
 new Config {
 
 
   def initProcessingUnits() {
-    processing += ProcessingModuleDescriptor(
+    processing += "Power Generator" -> ProcessingModuleDescriptor(
       name = "Power Generator",
 
       input = List(
@@ -23,7 +26,7 @@ new Config {
       capacity = 500
     )
 
-    processing += ProcessingModuleDescriptor(
+    processing += "Water Generator" -> ProcessingModuleDescriptor(
       name = "Water Generator",
 
       input = List(
@@ -70,7 +73,12 @@ new Config {
   }
 
   def initStartupStructures() {
-
+    structures += "Deep Space Nine" -> StructureDescriptor(
+      name = "Deep Space Nine",
+      coordinate = Coordinate(0, 0, 0),
+      resources = HashMap("Water" -> 3),
+      processingUnits = List(processing.get("Power Generator").get)
+    )
   }
 }
 

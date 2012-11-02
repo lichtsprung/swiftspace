@@ -9,7 +9,7 @@ import collection.immutable.HashMap
 
 case class StructureDescriptor(name: String,
                                val coordinate: Coordinate,
-                               val resources: HashMap[Resource, Double],
+                               val resources: HashMap[String, Double],
                                val processingUnits: List[ProcessingModuleDescriptor])
 
 

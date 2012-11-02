@@ -12,6 +12,7 @@ import java.io.File
 object Simulation {
   val url = getClass.getClassLoader.getResource("Configuration.scala").getFile
   val configuration = Eval[Config](new File(url))
+
   var tickRate = 0.1 seconds
 
   case object Tick
