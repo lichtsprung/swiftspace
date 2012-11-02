@@ -5,7 +5,7 @@ import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
 new Config {
 
 
-  def initProcessingUnits() = {
+  def initProcessingUnits() {
     processing += ProcessingModuleDescriptor(
       name = "Power Generator",
 
@@ -41,7 +41,7 @@ new Config {
     )
   }
 
-  def initResources() = {
+  def initResources() {
     resources += "Deuterium Oxide" -> Resource(
       name = "Deuterium Oxide",
       description = "Also known as Heavy Water",
@@ -67,6 +67,10 @@ new Config {
       description = "Electric power is needed almost anywhere",
       mass = 0.0,
       characteristics = List())
+  }
+
+  def initStartupStructures() {
+
   }
 }
 

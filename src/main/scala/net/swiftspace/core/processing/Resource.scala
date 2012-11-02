@@ -9,3 +9,7 @@ case class Resource(
                      mass: Double,
                      characteristics: List[String]
                      )
+
+object Resource {
+  val None = Resource("None", "Unknown resource", 0.0, List())
+}

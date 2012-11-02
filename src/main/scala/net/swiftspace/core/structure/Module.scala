@@ -5,6 +5,7 @@ import akka.actor.{ActorLogging, Actor}
 import collection.mutable
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Structure.{DemandResource, ReceiveResource}
+import net.swiftspace.core.Simulation
 
 
 /**
@@ -21,8 +22,8 @@ abstract class Module extends Actor with ActorLogging
  * @param capacity how much the processing unit can store
  */
 class ProcessingModule(name: String,
-                       input: List[(Resource, Double)],
-                       output: List[(Resource, Double)],
+                       input: List[(String, Double)],
+                       output: List[(String, Double)],
                        processingTime: Double,
                        capacity: Double)
   extends Module {
@@ -30,10 +31,10 @@ class ProcessingModule(name: String,
   import net.swiftspace.core.Simulation.Tick
 
   val resources = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
-  input.foreach(r => resources += r._1 -> 0.0)
+  input.foreach(r => resources += getResource(r._1) -> 0.0)
 
   val produces = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
-  output.foreach(r => produces += r._1 -> 0.0)
+  output.foreach(r => produces += getResource(r._1) -> 0.0)
   log.info("produces: " + produces)
 
   var counter = 0.0
@@ -41,25 +42,29 @@ class ProcessingModule(name: String,
 
   def processResources(): Unit = {
     log.debug("processing " + resources + " to " + produces)
-    if (input.foldLeft(true)((a, b) => a && resources.get(b._1).get >= b._2)) {
+    if (input.foldLeft(true)((a, b) => a && resources.get(getResource(b._1)).get >= b._2)) {
       storage += output.foldLeft(0.0)((a, b) => a + b._2)
       log.debug("capacity is: " + capacity)
       log.debug(capacity - storage + " storage capacity left!")
-      input.foreach(r => resources.update(r._1, resources.get(r._1).get - r._2))
-      output.foreach(r => produces.update(r._1, produces.get(r._1).get + r._2))
+      input.foreach(r => resources.update(getResource(r._1), resources.get(getResource(r._1)).get - r._2))
+      output.foreach(r => produces.update(getResource(r._1), produces.get(getResource(r._1)).get + r._2))
     } else {
       input.foreach(r => {
-        if (resources.get(r._1).get < r._2) {
-          log.debug("Demanding resource from main structure: " + r._1.name)
-          context.parent ! DemandResource(r._1, r._2 * 10)
+        if (resources.get(getResource(r._1)).get < r._2) {
+          log.debug("Demanding resource from main structure: " + getResource(r._1).name)
+          context.parent ! DemandResource(getResource(r._1), r._2 * 10)
         }
       })
     }
   }
 
+  private def getResource(name: String): Resource = {
+    Simulation.configuration.resources.get(name).getOrElse(Resource.None)
+  }
+
   def receive = {
     case Tick =>
-      counter += 0.1
+      counter += Simulation.tickRate.toSeconds
       if (counter >= processingTime) {
         processResources()
         counter = 0

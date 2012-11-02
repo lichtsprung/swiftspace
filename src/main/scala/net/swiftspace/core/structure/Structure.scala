@@ -5,6 +5,12 @@ import collection.mutable
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.Simulation.Coordinate
 import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
+import collection.immutable.HashMap
+
+case class StructureDescriptor(name: String,
+                               val coordinate: Coordinate,
+                               val resources: HashMap[Resource, Double],
+                               val processingUnits: List[ProcessingModuleDescriptor])
 
 
 object Structure {
