@@ -6,6 +6,7 @@ import collection.mutable
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Structure.{DemandResource, ReceiveResource}
 import net.swiftspace.core.Simulation
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -51,7 +52,7 @@ class ProcessingModule(name: String,
     } else {
       input.foreach(r => {
         if (resources.get(getResource(r._1)).get < r._2) {
-          log.debug("Demanding resource from main structure: " + getResource(r._1).name)
+          log.info("Demanding resource from main structure: " + getResource(r._1).name)
           context.parent ! DemandResource(getResource(r._1), r._2 * 10)
         }
       })
@@ -64,7 +65,7 @@ class ProcessingModule(name: String,
 
   def receive = {
     case Tick =>
-      counter += Simulation.tickRate.toSeconds
+      counter += Simulation.tickRate.toUnit(TimeUnit.SECONDS)
       if (counter >= processingTime) {
         processResources()
         counter = 0

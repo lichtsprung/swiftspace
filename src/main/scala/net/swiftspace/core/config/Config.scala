@@ -18,6 +18,7 @@ abstract class Config {
 
   initResources()
   initProcessingUnits()
+  initStartupStructures()
 
   def initProcessingUnits()
 

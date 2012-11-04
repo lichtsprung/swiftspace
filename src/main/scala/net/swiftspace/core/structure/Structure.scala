@@ -20,7 +20,7 @@ object Structure {
 
   case class NewProcessingModule(m: ProcessingModuleDescriptor)
 
-  case class NewStructure(coordinates: Coordinate)
+  case class NewStructure(descriptor: StructureDescriptor)
 
 }
 
@@ -38,25 +38,24 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
   def receive = {
     case Tick =>
       context.children.foreach(c => c ! Tick)
-      log.info("\nAvailable resources: " + resources)
     case ReceiveResource(resource, amount) =>
       if (resources.contains(resource)) {
         resources.update(resource, resources.get(resource).get + amount)
       } else {
         resources += resource -> amount
       }
+      log.info("Resource " + resource + " received: " + resources(resource))
     case DemandResource(resource, amount) =>
+      log.info("getting demand request from " + sender)
       if (resources.contains(resource)) {
-        if (resources.get(resource).get >= amount) {
+        if (resources(resource) >= amount) {
           sender ! ReceiveResource(resource, amount)
           resources.update(resource, resources.get(resource).get - amount)
         } else {
           log.info("Insufficient amount of resource " + resource.name)
         }
       } else {
-        resources += resource -> 1000.0
-        sender ! ReceiveResource(resource, amount)
-        resources.update(resource, resources.get(resource).get - amount)
+        resources += resource -> 0.0
       }
     case NewProcessingModule(m) =>
       log.info("Adding new processing unit")

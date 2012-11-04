@@ -10,7 +10,6 @@ object Main extends App {
   val simulation = system.actorOf(Props[Simulation], "simulation")
   val structure = system.actorFor("/user/simulation/structuremanager")
 
-  simulation ! TickRate(100.milliseconds)
-  structure ! NewStructure(Coordinate(0, 0, 0))
+  simulation ! TickRate(100 milliseconds)
 
 }

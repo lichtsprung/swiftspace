@@ -22,7 +22,7 @@ new Config {
       ),
 
       processingTime = 0.5,
-      capacity = 500
+      capacity = 6
     )
 
     processing += "Water Generator" -> ProcessingModuleDescriptor(
@@ -39,6 +39,23 @@ new Config {
       ),
 
       processingTime = 0.1,
+      capacity = 500
+    )
+
+    processing += "Electrolyser" -> ProcessingModuleDescriptor(
+      name = "Electrolyser",
+
+      input = List(
+        ("Water", 1),
+        ("Power", 2)
+      ),
+
+      output = List(
+        ("Oxygen", 2),
+        ("Hydrogen", 1)
+      ),
+
+      processingTime = 0.6,
       capacity = 500
     )
   }
@@ -69,14 +86,25 @@ new Config {
       description = "Electric power is needed almost anywhere",
       mass = 0.0,
       characteristics = List())
+    resources += "Helium" -> Resource(
+      name = "Helium",
+      description = "Something, something",
+      mass = 2.6,
+      characteristics = List())
   }
 
   def initStartupStructures() {
     structures += "Deep Space Nine" -> StructureDescriptor(
       name = "Deep Space Nine",
       coordinate = Coordinate(0, 0, 0),
-      resources = Map("Water" -> 3.0),
-      processingUnits = List(processing("Power Generator"))
+      resources = Map(
+        "Water" -> 3.0,
+        "Deuterium Oxide" -> 100,
+        "Oxygen" -> 500,
+        "Hydrogen" -> 500,
+        "Power" -> 50),
+      processingUnits = List(
+        processing("Power Generator"))
     )
   }
 }
