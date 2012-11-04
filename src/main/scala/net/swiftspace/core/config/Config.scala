@@ -12,9 +12,9 @@ import net.swiftspace.core.structure.StructureDescriptor
 abstract class Config {
 
 
-  val processing = mutable.HashMap[String, ProcessingModuleDescriptor]()
-  val resources = mutable.HashMap[String, Resource]()
-  val structures = mutable.HashMap[String, StructureDescriptor]()
+  val processing = mutable.Map[String, ProcessingModuleDescriptor]()
+  val resources = mutable.Map[String, Resource]()
+  val structures = mutable.Map[String, StructureDescriptor]()
 
   initResources()
   initProcessingUnits()

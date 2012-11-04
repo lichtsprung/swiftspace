@@ -5,11 +5,10 @@ import collection.mutable
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.Simulation.Coordinate
 import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
-import collection.immutable.HashMap
 
 case class StructureDescriptor(name: String,
                                val coordinate: Coordinate,
-                               val resources: HashMap[String, Double],
+                               val resources: Map[String, Double],
                                val processingUnits: List[ProcessingModuleDescriptor])
 
 
@@ -33,7 +32,7 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
   import net.swiftspace.core.Simulation._
   import net.swiftspace.core.structure.Structure._
 
-  val resources = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
+  val resources = mutable.Map[Resource, Double]().withDefaultValue(0.0)
 
 
   def receive = {

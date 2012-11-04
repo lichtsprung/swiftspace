@@ -1,4 +1,3 @@
-import collection.immutable.HashMap
 import net.swiftspace.core.config.Config
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.Simulation.Coordinate
@@ -76,8 +75,8 @@ new Config {
     structures += "Deep Space Nine" -> StructureDescriptor(
       name = "Deep Space Nine",
       coordinate = Coordinate(0, 0, 0),
-      resources = HashMap("Water" -> 3),
-      processingUnits = List(processing.get("Power Generator").get)
+      resources = Map("Water" -> 3.0),
+      processingUnits = List(processing("Power Generator"))
     )
   }
 }
