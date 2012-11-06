@@ -5,3 +5,6 @@ Milestone 1:
 - Processing Modules can be added to a structure
 - Processing Modules can process arbitrary resources
 
+Milestone 2:
+
+- Agents added to the simulation

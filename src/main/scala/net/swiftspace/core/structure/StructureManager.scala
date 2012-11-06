@@ -1,12 +1,8 @@
 package net.swiftspace.core.structure
 
-import akka.actor.{ActorRef, ActorLogging, Props, Actor}
-import net.swiftspace.core.structure.Structure.{ReceiveResource, NewProcessingModule, NewStructure}
-import xml.XML
-import java.io.File
-import com.twitter.util.Eval
-import net.swiftspace.core.config.Config
+import akka.actor.{ActorLogging, Props, Actor}
 import net.swiftspace.core.Simulation
+import net.swiftspace.core.structure.Structure.{ReceiveResource, NewProcessingModule, NewStructure}
 
 
 object StructureManager {

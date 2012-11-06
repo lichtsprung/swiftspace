@@ -1,13 +1,14 @@
 package net.swiftspace.core
 
-import akka.util.duration._
 import akka.actor.{Props, ActorLogging, Actor}
+import akka.util.FiniteDuration
+import akka.util.duration._
+import com.twitter.util.Eval
 import config.Config
+import java.io.File
+import net.swiftspace.core.Simulation._
 import structure.Structure.NewStructure
 import structure.StructureManager
-import akka.util.FiniteDuration
-import com.twitter.util.Eval
-import java.io.File
 
 
 object Simulation {
@@ -24,7 +25,6 @@ object Simulation {
 
 }
 
-import net.swiftspace.core.Simulation._
 
 class Simulation extends Actor with ActorLogging {
   val structure = context.actorOf(Props[StructureManager], "structuremanager")
@@ -48,7 +48,7 @@ class Simulation extends Actor with ActorLogging {
       ticker = context.system.scheduler.schedule(rate, rate, self, Tick)
   }
 
-  override def postStop() = {
+  override def postStop() {
     ticker.cancel()
   }
 }

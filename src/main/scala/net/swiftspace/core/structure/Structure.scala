@@ -2,8 +2,8 @@ package net.swiftspace.core.structure
 
 import akka.actor.{Props, ActorLogging, Actor}
 import collection.mutable
-import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.Simulation.Coordinate
+import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
 
 case class StructureDescriptor(name: String,

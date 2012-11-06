@@ -1,12 +1,11 @@
 package net.swiftspace.core.structure
 
 import akka.actor.{ActorLogging, Actor}
-
 import collection.mutable
+import java.util.concurrent.TimeUnit
+import net.swiftspace.core.Simulation
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Structure.{DemandResource, ReceiveResource}
-import net.swiftspace.core.Simulation
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -41,7 +40,7 @@ class ProcessingModule(name: String,
   var counter = 0.0
   var storage = 0.0
 
-  def processResources(): Unit = {
+  def processResources() {
     log.debug("processing " + resources + " to " + produces)
     if (input.foldLeft(true)((a, b) => a && resources.get(getResource(b._1)).get >= b._2)) {
       storage += output.foldLeft(0.0)((a, b) => a + b._2)
