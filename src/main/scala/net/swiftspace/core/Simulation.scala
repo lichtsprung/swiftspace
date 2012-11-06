@@ -14,7 +14,7 @@ object Simulation {
   val url = getClass.getClassLoader.getResource("Configuration.scala").getFile
   val configuration = Eval[Config](new File(url))
 
-  var tickRate = 1 second
+  var tickRate = 1.second
 
   case object Tick
 
@@ -28,12 +28,12 @@ import net.swiftspace.core.Simulation._
 
 class Simulation extends Actor with ActorLogging {
   val structure = context.actorOf(Props[StructureManager], "structuremanager")
- log.info("Loading configuration...")
+  log.info("Loading configuration...")
 
   Simulation.configuration.structures.foreach(s => {
     log.info("Spawning new structure: " + s._2)
-    structure ! NewStructure(s._2)}
-  )
+    structure ! NewStructure(s._2)
+  })
 
   var ticker = context.system.scheduler.schedule(1 second, 1 second, self, Tick)
 
