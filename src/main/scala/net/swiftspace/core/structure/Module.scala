@@ -51,7 +51,7 @@ class ProcessingModule(name: String,
     } else {
       input.foreach(r => {
         if (resources.get(getResource(r._1)).get < r._2) {
-          log.info("Demanding resource from main structure: " + getResource(r._1).name)
+          log.debug("Demanding resource from main structure: " + getResource(r._1).name)
           context.parent ! DemandResource(getResource(r._1), r._2 * 10)
         }
       })

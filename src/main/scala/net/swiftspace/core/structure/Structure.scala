@@ -5,11 +5,12 @@ import collection.mutable
 import net.swiftspace.core.Simulation.Coordinate
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
+import net.swiftspace.core.structure.StructureManager.StructureInVicinty
 
 case class StructureDescriptor(name: String,
-                               val coordinate: Coordinate,
-                               val resources: Map[String, Double],
-                               val processingUnits: List[ProcessingModuleDescriptor])
+                               coordinate: Coordinate,
+                               resources: Map[String, Double],
+                               processingUnits: List[ProcessingModuleDescriptor])
 
 
 object Structure {
@@ -40,17 +41,17 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
       context.children.foreach(c => c ! Tick)
     case ReceiveResource(resource, amount) =>
       if (resources.contains(resource)) {
-        resources.update(resource, resources.get(resource).get + amount)
+        resources.update(resource, resources(resource) + amount)
       } else {
         resources += resource -> amount
       }
-      log.info("Resource " + resource + " received: " + resources(resource))
+      log.debug("Resource " + resource + " received: " + resources(resource))
     case DemandResource(resource, amount) =>
-      log.info("getting demand request from " + sender)
+      log.debug("getting demand request from " + sender)
       if (resources.contains(resource)) {
         if (resources(resource) >= amount) {
           sender ! ReceiveResource(resource, amount)
-          resources.update(resource, resources.get(resource).get - amount)
+          resources.update(resource, resources(resource) - amount)
         } else {
           log.info("Insufficient amount of resource " + resource.name)
         }
@@ -60,6 +61,11 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
     case NewProcessingModule(m) =>
       log.info("Adding new processing unit")
       context.actorOf(Props(new ProcessingModule(m.name, m.input, m.output, m.processingTime, m.capacity)))
+    case StructureInVicinty(c, distance) =>
+      val d = coordinate.distance(c)
+      if ( d<= distance) {
+        sender ! self
+      }
 
   }
 }
