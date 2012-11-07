@@ -2,7 +2,7 @@ package net.swiftspace.core
 
 import akka.actor.{Props, ActorSystem}
 import net.swiftspace.core.Simulation.Coordinate
-import structure.StructureManager.StructureInVicinty
+import structure.StructureManager.StructureInVicinity
 
 
 object Main extends App {

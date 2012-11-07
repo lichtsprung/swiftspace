@@ -6,6 +6,7 @@ import java.util.concurrent.TimeUnit
 import net.swiftspace.core.Simulation
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Structure.{DemandResource, ReceiveResource}
+import net.swiftspace.core.Simulation._
 
 
 /**
@@ -30,45 +31,68 @@ class ProcessingModule(name: String,
 
   import net.swiftspace.core.Simulation.Tick
 
+  //  Resources and the available units stored inside the unit.
   val resources = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
+
+  //  Filling the resource map with content.
   input.foreach(r => resources += getResource(r._1) -> 0.0)
 
+  //  The resources that are being produced by this module and the available amounts.
   val produces = mutable.HashMap[Resource, Double]().withDefaultValue(0.0)
-  output.foreach(r => produces += getResource(r._1) -> 0.0)
-  log.info("produces: " + produces)
 
+  //  Filling the produce map with content.
+  output.foreach(r => produces += getResource(r._1) -> 0.0)
+
+
+  //  Tick counter that is incremented on every global tick message. It is used to determine when the processResource
+  //  function is called.
   var counter = 0.0
+
+  //  Counter for the amount of stored produces. When the max capacity is reached, the module stops producing goods.
   var storage = 0.0
 
+  /**
+   * Called when the processing timer is full and the module can produce new units of goods.
+   * In that process the input resources are consumed while the produces are being created and stored inside this
+   * module.
+   */
   def processResources() {
-    log.debug("processing " + resources + " to " + produces)
-    if (input.foldLeft(true)((a, b) => a && resources.get(getResource(b._1)).get >= b._2)) {
+    // Controls whether there are enough resources available to produce a unit by checking the available amount of every
+    // ingredient. One unit of the resulting good is created and stored if all resources are sufficiently available.
+    if (input.foldLeft(true)((a, b) => a && resources(getResource(b._1)) >= b._2)) {
+      // Adding the the newly created good to the internal storage.
       storage += output.foldLeft(0.0)((a, b) => a + b._2)
-      log.debug("capacity is: " + capacity)
-      log.debug(capacity - storage + " storage capacity left!")
+
+      // Removing used input resources.
       input.foreach(r => resources.update(getResource(r._1), resources.get(getResource(r._1)).get - r._2))
+
+      // Adding the created goods to the map.
       output.foreach(r => produces.update(getResource(r._1), produces.get(getResource(r._1)).get + r._2))
     } else {
+      // Demanding new resources from the station if not enough are available.
       input.foreach(r => {
-        if (resources.get(getResource(r._1)).get < r._2) {
-          log.debug("Demanding resource from main structure: " + getResource(r._1).name)
+        // Checking if the resource r needs restocking.
+        if (resources(getResource(r._1)) < r._2) {
+          // Sending demand to station (the parent of this actor)
           context.parent ! DemandResource(getResource(r._1), r._2 * 10)
         }
       })
     }
   }
 
-  private def getResource(name: String): Resource = {
-    Simulation.configuration.resources.get(name).getOrElse(Resource.None)
-  }
 
   def receive = {
+    // Global update tick
     case Tick =>
+      // Adding tick rate to counter. When the counter reaches the processingTime threshold, the processing function is
+      // called.
       counter += Simulation.tickRate.toUnit(TimeUnit.SECONDS)
       if (counter >= processingTime) {
         processResources()
         counter = 0
       }
+      // If internal storage is almost full (80%), the station gets a notification that it will receive new resources
+      // from this unit.
       if (storage > 0.8 * capacity) {
         produces.foreach(r => {
           context.parent ! ReceiveResource(r._1, r._2)
@@ -76,14 +100,16 @@ class ProcessingModule(name: String,
         })
         storage = 0.0
       }
+
+    // Handling new resources from the structure
     case ReceiveResource(resource, amount) =>
+      // Checking whether this unit can process the received resource. If it can't, send it back to the structure.
       if (resources.contains(resource)) {
         resources.update(resource, resources.get(resource).get + amount)
       } else {
         log.error("Module cannot process " + resource)
+        context.parent ! ReceiveResource(resource, amount)
       }
-
-      log.debug("Amount of " + resource + " available: " + resources.get(resource))
   }
 }
 
