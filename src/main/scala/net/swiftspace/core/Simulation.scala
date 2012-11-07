@@ -10,11 +10,13 @@ import structure.Structure.NewStructure
 import structure.StructureManager
 import structure.StructureManager.StructureInVicinty
 import akka.util.Timeout
-import concurrent.duration._
-import concurrent.ExecutionContext.Implicits.global
+import akka.util.duration._
 
 
 object Simulation {
+
+  import akka.util.FiniteDuration
+
   val url = getClass.getClassLoader.getResource("Configuration.scala").getFile
   val configuration = Eval[Config](new File(url))
 
@@ -44,8 +46,10 @@ class Simulation extends Actor with ActorLogging {
     structure ! NewStructure(s._2)
   })
 
-  val list = structure ? StructureInVicinty(Coordinate(1, 1, 1), 5)
-  println(list.isCompleted)
+  // Test: Ist eine Raumstruktur im Umkreis von acht Einheiten von der Koordinate (1,1,6)?
+  val list = structure ? StructureInVicinty(Coordinate(1, 1, 6), 8)
+  println(list)
+  list.onSuccess{case m => println("teeeeest: " + m)}
 
   var ticker = context.system.scheduler.schedule(1 second, 1 second, self, Tick)
 

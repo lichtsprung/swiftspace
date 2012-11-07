@@ -8,9 +8,8 @@ import net.swiftspace.core.structure.StructureManager.StructureInVicinty
 import akka.util.Timeout
 import akka.pattern.ask
 import akka.pattern.pipe
-import concurrent.Future
-import scala.concurrent.duration._
-import concurrent.ExecutionContext.Implicits.global
+import akka.util.duration._
+
 
 
 object StructureManager {
@@ -39,8 +38,10 @@ class StructureManager extends Actor with ActorLogging {
       descriptor.resources.foreach(resource => structure ! ReceiveResource(Simulation.configuration.resources(resource._1), resource._2))
       descriptor.processingUnits.foreach(unitDescriptor => structure ! NewProcessingModule(unitDescriptor))
     case StructureInVicinty(coordinate, distance) =>
+      import akka.dispatch.{ExecutionContext, Future}
       log.info("asking structures...")
       implicit val timeout = Timeout(1.seconds)
+      implicit val ec = context.dispatcher
 
       val listOfFutures = context.children.map(child => (child ? StructureInVicinty(coordinate, distance)).mapTo[ActorRef])
       val futureList = Future.sequence(listOfFutures)
