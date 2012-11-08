@@ -92,7 +92,6 @@ class Simulation extends Actor with ActorLogging {
 
     // Tick rate was changed.
     case TickRate(rate) =>
-      log.debug("Changing tick rate to " + rate)
       ticker.cancel()
       Simulation.tickRate = rate
       ticker = context.system.scheduler.schedule(rate, rate, self, Tick)
