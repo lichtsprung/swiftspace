@@ -8,7 +8,8 @@ import net.swiftspace.core.structure.StructureManager.StructureInVicinity
 import akka.util.Timeout
 import akka.pattern.ask
 import akka.pattern.pipe
-import akka.util.duration._
+import scala.concurrent.duration._
+import scala.concurrent.Future
 
 
 /**
@@ -51,7 +52,7 @@ class StructureManager extends Actor with ActorLogging {
     // whether they are within the vicinity circle.
     // After a timeout the list with all neighbours will be passed to the requesting actor in a future.
     case StructureInVicinity(coordinate, distance) =>
-      import akka.dispatch.Future
+
 
       // Timeout for the future.
       implicit val timeout = Timeout(1.seconds)

@@ -1,6 +1,6 @@
 version := "0.1"
 
-scalaVersion := "2.9.2"
+scalaVersion := "2.10.1"
 
 name := "SwiftSpace Core"
 
@@ -14,8 +14,8 @@ resolvers += "Typesafe Release Repository" at "http://repo.typesafe.com/typesafe
 
 resolvers += "Scala Tools Snapshots" at "https://oss.sonatype.org/content/repositories/snapshots/"
 
-libraryDependencies += "com.typesafe.akka" % "akka-actor" % "2.0.3"
+libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2-SNAPSHOT"
 
-libraryDependencies += "com.twitter"   % "util-eval"   % "5.3.13"
+libraryDependencies += "com.twitter" % "util-eval_2.10" % "6.3.0"
 
 

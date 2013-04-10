@@ -8,14 +8,13 @@ import net.swiftspace.core.Simulation._
 import processing.Resource
 import structure.Structure.NewStructure
 import structure.StructureManager
-import akka.util.duration._
+import scala.concurrent.duration._
+import scala.concurrent.ExecutionContext.Implicits.global
 
 /**
  * Companion object with utility functions.
  */
 object Simulation {
-
-  import akka.util.FiniteDuration
 
   // Loading configuration file from the classpath.
   val url = getClass.getClassLoader.getResource("Configuration.scala").getFile
