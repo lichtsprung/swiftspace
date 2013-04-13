@@ -68,6 +68,7 @@ class ProcessingModule(name: String,
 
       // Adding the created goods to the map.
       output.foreach(r => produces.update(getResource(r._1), produces.get(getResource(r._1)).get + r._2))
+      produces.foreach(r => log.info("Resource: " + r._1 + " :: " + r._2))
     } else {
       // Demanding new resources from the station if not enough are available.
       input.foreach(r => {

@@ -6,6 +6,7 @@ import net.swiftspace.core.Simulation.Coordinate
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.structure.Module.ProcessingModuleDescriptor
 import net.swiftspace.core.structure.StructureManager.StructureInVicinity
+import net.swiftspace.core.{Simulation, SwiftspaceAgent}
 
 case class StructureDescriptor(name: String,
                                coordinate: Coordinate,
@@ -28,23 +29,23 @@ object Structure {
 /**
  * A structure is a complex building in space that can be upgraded with different kinds of structure modules.
  * Those modules are added as child actors to the structure actor.
+ *
+ * TODO Structure should be a SwiftspaceAgent!
  */
-class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
+class Structure(coordinate: Coordinate) extends SwiftspaceAgent {
 
-  import net.swiftspace.core.Simulation._
-  import net.swiftspace.core.structure.Structure._
 
   // The resources that are (or were) available on this structure.
   val resources = mutable.Map[Resource, Double]().withDefaultValue(0.0)
 
 
-  def receive = {
+  override def receive = {
     // Update tick that is forwarded to all children (the structure modules)
-    case Tick =>
-      context.children.foreach(c => c ! Tick)
+    case Simulation.Tick =>
+      context.children.foreach(c => c ! Simulation.Tick)
 
     // Receiving resources from someone of something!
-    case ReceiveResource(resource, amount) =>
+    case Structure.ReceiveResource(resource, amount) =>
       // If resource is already known to this structure then just update the amount of this resource
       // otherwise add the resource to the list of known resources.
       if (resources.contains(resource)) {
@@ -54,13 +55,14 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
       }
 
     // Someone or something is demanding a resource from the structure.
-    case DemandResource(resource, amount) =>
+    case Structure.DemandResource(resource, amount) =>
 
       // Is this resource available?
       if (resources.contains(resource)) {
         // Send demanded amount of resource to requester if it is available.
         if (resources(resource) >= amount) {
-          sender ! ReceiveResource(resource, amount)
+          log.info("Sending " + resource + " to structure...")
+          sender ! Structure.ReceiveResource(resource, amount)
           resources.update(resource, resources(resource) - amount)
         } else {
           // Not enough resources available :-(
@@ -73,7 +75,7 @@ class Structure(coordinate: Coordinate) extends Actor with ActorLogging {
         resources += resource -> 0.0
       }
     // Hurray! The structure gets a new processing module!
-    case NewProcessingModule(m) =>
+    case Structure.NewProcessingModule(m) =>
       log.info("Adding new processing unit: " + m)
       context.actorOf(Props(new ProcessingModule(m.name, m.input, m.output, m.processingTime, m.capacity)))
     // Structure is asked if it is in the vicinity of some arbitrary point.
