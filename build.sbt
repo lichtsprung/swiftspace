@@ -16,6 +16,10 @@ resolvers += "Scala Tools Snapshots" at "https://oss.sonatype.org/content/reposi
 
 libraryDependencies += "com.typesafe.akka" % "akka-actor_2.10" % "2.2-SNAPSHOT"
 
+libraryDependencies += "com.typesafe.akka" % "akka-testkit_2.10" % "2.2-SNAPSHOT"
+
 libraryDependencies += "com.twitter" % "util-eval_2.10" % "6.3.0"
+
+libraryDependencies += "org.scalatest" % "scalatest_2.10" % "1.9.1" % "test"
 
 

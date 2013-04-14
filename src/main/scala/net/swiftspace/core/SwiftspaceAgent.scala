@@ -1,31 +1,26 @@
 package net.swiftspace.core
 
 import akka.actor.{ActorLogging, Actor}
+import scala.collection.mutable
 
 /**
  * An agent is an active entity in the simulation.
  * Accepted Messages:
- * - SwiftspaceAgent.AddAttribute
  * - SwiftspaceAgent.AddEffect
- * - SwiftspaceAgent.RemoveAttribute
  * - SwiftspaceAgent.RemoveEffect
  */
-class SwiftspaceAgent extends Actor with ActorLogging {
+class SwiftspaceAgent(val attributes: List[Attribute]) extends Actor with ActorLogging {
+  val activeEffects = mutable.Buffer[Effect]()
+  val attributesState = mutable.Map[Attribute, Double]()
 
   def receive = {
-    case SwiftspaceAgent.AddAttribute => ???
-    case SwiftspaceAgent.AddEffect => ???
-    case SwiftspaceAgent.RemoveAttribute => ???
-    case SwiftspaceAgent.RemoveEffect => ???
+    case SwiftspaceAgent.AddEffect(effect) => ???
+    case SwiftspaceAgent.RemoveEffect(effect) => ???
     case _ => log.info("Huh?")
   }
 }
 
 object SwiftspaceAgent {
-
-  case class AddAttribute(attribute: Attribute)
-
-  case class RemoveAttribute(attribute: Attribute)
 
   case class AddEffect(effect: Effect)
 
@@ -35,4 +30,10 @@ object SwiftspaceAgent {
 
 case class Attribute(name: String)
 
-case class Effect(name: String)
+case class Effect(name: String, effectFunction: (SwiftspaceAgent) => Unit)
+
+object Effect {
+
+  case class LowerAttribute(attribute: Attribute)
+
+}

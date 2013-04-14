@@ -1,3 +1,5 @@
+import net.swiftspace.core.SwiftspaceAgent.AddEffect
+import net.swiftspace.core.{SwiftspaceAgent, Effect, Attribute}
 import net.swiftspace.core.config.Config
 import net.swiftspace.core.processing.Resource
 import net.swiftspace.core.Simulation.Coordinate
@@ -92,6 +94,14 @@ new Config {
       mass = 2.6,
       characteristics = List())
   }
+
+  def initAttributes() {
+    attributes += Attribute("Strength")
+    attributes += Attribute("Intelligence")
+    attributes += Attribute("Physique")
+    attributes += Attribute("Health")
+  }
+
 
   def initStartupStructures() {
     structures += "Deep Space Nine" -> StructureDescriptor(
